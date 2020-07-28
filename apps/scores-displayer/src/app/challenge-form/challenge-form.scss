@@ -1,0 +1,55 @@
+@import '../variables.scss';
+
+.challenge-form {
+    display: flex;
+    flex-direction: column;
+    align-content: center;
+
+    button {
+        border: none;
+        border-radius: 2px;
+        padding: 4px 0;
+
+        &.valid {
+            background-color: rgb(104, 216, 104);
+            &:hover {
+                background-color: darken(rgb(104, 216, 104), 5);
+            }
+            &[disabled] {
+                background-color: rgb(104, 216, 104);
+            }
+        }
+
+        &.reset {
+            background-color: orange;
+            &:hover {
+                background-color: darken(orange, 5);
+            }
+        }
+        
+    }
+
+    input, button {
+        margin: 4px 0;
+    }
+
+}
+
+.form-group {
+
+    label {
+       display: none;
+    }
+    
+    input {
+        padding: 5px 8px;
+        border: 1px solid black;
+        width: 100%;
+        box-sizing: border-box;
+
+        @media screen and (max-width: 640px) {
+            flex-direction: column;
+        }
+    }
+
+}

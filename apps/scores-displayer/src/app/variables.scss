@@ -1,0 +1,19 @@
+$sam-color: rgb(100, 183, 49);
+$clover-color: rgb(255, 179, 43);
+$alex-color: rgb(231, 40, 60);
+
+// Minus 30 on all channels
+$dark-sam-color: rgb(70, 153, 19);
+$dark-clover-color: rgb(225, 149, 13);
+$dark-alex-color: rgb(201, 10, 30);
+
+$headers-padding: 5px 15px;
+$bodies-padding: 10px 15px;
+
+.header {
+    padding: $headers-padding;
+}
+
+.body {
+    padding: $bodies-padding;
+}

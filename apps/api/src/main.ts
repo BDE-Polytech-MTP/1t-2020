@@ -1,16 +1,50 @@
 import * as express from 'express';
-import { Message } from '@1t/api-interfaces';
+import { migrate, db } from './app/db';
+import { createChallenge } from './app/createChallenge';
+import { pathChallenge } from './app/patchChallenge';
+import { deleteChallenge } from './app/deleteChallenge';
+import { json } from 'body-parser';
+import * as cors from 'cors';
+import { checkAdmin } from './app/check-admin';
 
-const app = express();
+const main = async () => {
 
-const greeting: Message = { message: 'Welcome to api!' };
+  await migrate();
 
-app.get('/api', (req, res) => {
-  res.send(greeting);
-});
+  const app = express();
+  const router = express.Router();
 
-const port = process.env.port || 3333;
-const server = app.listen(port, () => {
-  console.log('Listening at http://localhost:' + port + '/api');
-});
-server.on('error', console.error);
+  router.get('/challenges', async (_, res) => {
+    try {
+      const { rows } = await db.query('SELECT * FROM challenges ORDER BY title, uuid');
+      return res.json(rows);
+    } catch (_) {
+      return res.sendStatus(500);
+    }
+  });
+
+  router.post('/challenges', cors(), checkAdmin, async (req, res) => {
+    await createChallenge(req, res);
+  });
+
+  router.patch('/challenges/:uuid', cors(), checkAdmin, async (req, res) => {
+    await pathChallenge(req, res);
+  });
+
+  router.delete('/challenges/:uuid', cors(), checkAdmin, async (req, res) => {
+    await deleteChallenge(req, res);
+  });
+
+  app.use(json({ limit: '5kb' }));
+  app.use(cors());
+  app.use('/api', router);
+  
+  
+  const port = process.env.PORT || 3333;
+  const server = app.listen(port, () => {
+    console.log('Listening at http://localhost:' + port + '/api');
+  });
+  server.on('error', console.error);
+};
+ 
+main().catch(console.error);

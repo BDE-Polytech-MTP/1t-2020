@@ -1,0 +1,11 @@
+ALTER TABLE challenges
+DROP COLUMN done;
+
+ALTER TABLE challenges
+ADD sam BOOLEAN NOT NULL DEFAULT false;
+
+ALTER TABLE challenges
+ADD clover BOOLEAN  NOT NULL DEFAULT false;
+
+ALTER TABLE challenges
+ADD alex BOOLEAN  NOT NULL DEFAULT false;

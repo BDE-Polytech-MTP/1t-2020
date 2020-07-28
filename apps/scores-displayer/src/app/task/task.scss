@@ -1,0 +1,109 @@
+@import '../variables.scss';
+
+.task {
+
+    display: flex;
+    flex-direction: row;
+
+    .text {
+        flex-grow: 1;
+    }
+
+    .boxes {
+        display: flex;
+        flex-direction: row;
+    }
+
+    .delete {
+        margin-left: 5px;
+        text-decoration: underline;
+
+        &:hover {
+            color: grey;
+        }
+    }
+
+    .checkbox {
+        border: 4px solid;
+        width: 15px;
+        height: 15px;
+        margin-left: 5px;
+
+        &:nth-of-type(1) {
+            border-color: $clover-color;
+            
+            &.done {
+                background-color: $clover-color;
+            }
+        }
+
+        &:nth-of-type(2) {
+            border-color: $sam-color;
+
+            &.done {
+                background-color: $sam-color;
+            }
+        }
+
+        &:nth-of-type(3) {
+            border-color: $alex-color;
+
+            &.done {
+                background-color: $alex-color;
+            }
+        }
+
+    }
+
+}
+
+.dialog-background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba($color: grey, $alpha: 0.4);
+    z-index: 1;
+}
+
+.confirm-dialog {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+    .content {
+        background-color: white;
+        margin: 5px 15px;
+        padding: $bodies-padding;
+        z-index: 2;
+
+        button {
+            border: none;
+            border-radius: 2px;
+            padding: 4px 0;
+            margin: 4px 0;
+            width: 100%;
+            box-sizing: border-box;
+
+            &.cancel {
+                background-color: rgb(221, 107, 107);
+                &:hover {
+                    background-color: darken($color: rgb(221, 107, 107), $amount: 10);
+                }
+            }
+
+            &.confirm {
+                background-color: lightgreen;
+                &:hover {
+                    background-color: darken($color: lightgreen, $amount: 10);
+                }
+            }
+        }
+    }
+}
