@@ -16,7 +16,7 @@ const main = async () => {
 
   router.get('/challenges', async (_, res) => {
     try {
-      const { rows } = await db.query('SELECT * FROM challenges ORDER BY title, uuid');
+      const { rows } = await db.query('SELECT * FROM challenges ORDER BY category DESC, score, title, uuid');
       return res.json(rows);
     } catch (_) {
       return res.sendStatus(500);

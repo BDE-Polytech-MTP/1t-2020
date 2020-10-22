@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  apiURL: 'https://1t.igpolytech.fr'
+  apiURL: 'https://bde-1t.herokuapp.com'
 };

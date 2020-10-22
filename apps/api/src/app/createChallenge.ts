@@ -13,9 +13,10 @@ export async function createChallenge(req: Request, res: Response) {
         uuid: uuid(),
         title: req.body.title,
         score: req.body.score,
-        sam: false,
-        clover: false,
-        alex: false,
+        sam: 0,
+        clover: 0,
+        alex: 0,
+        category: req.body.category
     };
 
     try {
@@ -29,13 +30,14 @@ export async function createChallenge(req: Request, res: Response) {
 
 function isBodyValid(req: Request): boolean {
     return req.body && 
-          typeof req.body.title === 'string' && req.body.title.length > 0 &&
-          typeof req.body.score === 'number' && req.body.score >= 0;
+          typeof req.body.title === 'string' && req.body.title.length > 0 && req.body.title.length <= 255 &&
+          typeof req.body.score === 'number' && req.body.score >= 0 &&
+          (req.body.category === null || typeof req.body.category === 'string' && req.body.category.length > 0 && req.body.category.length <= 255);
 }
 
 async function insertChallenge(challenge: Challenge) {
     await db.query(
-        'INSERT INTO challenges (uuid, title, score, sam, clover, alex) VALUES ($1, $2, $3, $4, $5, $6)', 
-        [challenge.uuid, challenge.title, challenge.score, challenge.sam, challenge.clover, challenge.alex]
+        'INSERT INTO challenges (uuid, title, score, sam, clover, alex, category) VALUES ($1, $2, $3, $4, $5, $6, $7)', 
+        [challenge.uuid, challenge.title, challenge.score, challenge.sam, challenge.clover, challenge.alex, challenge.category]
     );
 }

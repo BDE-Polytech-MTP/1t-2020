@@ -13,10 +13,46 @@ export const App = () => {
   const [challenges, setChallenges] = useState<Challenge[]>([]);
   const [scores, setScores] = useState<{ sam: number, clover: number, alex: number}>({ sam: 0, clover: 0, alex: 0});
 
+  const reorderChallenges = (challenges: Challenge[]) => {
+    challenges.sort((ch1: Challenge, ch2: Challenge) => {
+      // Sort by category
+      if (ch1.category === null && ch2.category !== null) {
+        return -1;
+      }
+
+      if (ch1.category !== null && ch2.category === null) {
+        return 1;
+      }
+
+      if (ch1.category !== null && ch2.category !== null) {
+        const order = ch1.category.localeCompare(ch2.category);
+        if (order !== 0) {
+          return -order;
+        }
+      }
+
+      // Sort by score
+      if (ch1.score !== ch2.score) {
+        return ch1.score < ch2.score ? -1 : 1;
+      }
+
+      // Sort by name
+      const nameOrder = ch1.title.localeCompare(ch2.title);
+      if (nameOrder !== 0) {
+        return nameOrder;
+      }
+
+      // Sort by UUID
+      return ch1.uuid.localeCompare(ch2.uuid);
+    });
+  };
+
   const updateChallenge = (challenge: Challenge) => {
     const challIndex = challenges.map(c => c.uuid).indexOf(challenge.uuid);
     if (challIndex < 0) {
-      setChallenges([ ... challenges, challenge ]);
+      const newChallenges = [ ... challenges, challenge ];
+      reorderChallenges(newChallenges);
+      setChallenges(newChallenges);
     } else {
       const firstPart = challenges.slice(0, challIndex);
       const secondPart = challenges.slice(challIndex + 1, challenges.length);
@@ -39,18 +75,11 @@ export const App = () => {
 
   useEffect(() => {
     let computedScores = { sam: 0, clover: 0, alex: 0};
+
     challenges.forEach((challenge) => {
-      if (challenge.sam) {
-        computedScores.sam += challenge.score;
-      }
-
-      if (challenge.clover) {
-        computedScores.clover += challenge.score;
-      }
-
-      if (challenge.alex) {
-        computedScores.alex += challenge.score;
-      }
+      computedScores.sam += challenge.score * challenge.sam;
+      computedScores.clover += challenge.score * challenge.clover;
+      computedScores.alex += challenge.score * challenge.alex;
     });
 
     setScores(computedScores);

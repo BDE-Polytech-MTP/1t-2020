@@ -1,0 +1,28 @@
+ALTER TABLE challenges ALTER clover DROP DEFAULT;
+ALTER TABLE challenges ALTER sam DROP DEFAULT;
+ALTER TABLE challenges ALTER alex DROP DEFAULT;
+
+ALTER TABLE challenges
+ALTER clover SET DATA TYPE INTEGER USING 
+    CASE 
+        WHEN clover=TRUE THEN 1 
+        ELSE 0
+    END;
+
+ALTER TABLE challenges
+ALTER sam SET DATA TYPE INTEGER USING 
+    CASE 
+        WHEN sam=TRUE THEN 1 
+        ELSE 0
+    END;
+
+ALTER TABLE challenges
+ALTER alex SET DATA TYPE INTEGER USING 
+    CASE 
+        WHEN alex=TRUE THEN 1 
+        ELSE 0
+    END;
+
+ALTER TABLE challenges ALTER clover SET DEFAULT 0;
+ALTER TABLE challenges ALTER sam SET DEFAULT 0;
+ALTER TABLE challenges ALTER alex SET DEFAULT 0;

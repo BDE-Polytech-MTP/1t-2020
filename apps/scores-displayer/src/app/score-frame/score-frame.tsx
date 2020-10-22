@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './score-frame.scss';
 
-const ScoreFrame = (props: {team: string, score: number}) => {
+const ScoreFrame = (props: {team: string, score: number, rank: string, onDisplayedScoreChanged: (displayedScore: number) => void}) => {
 
     const [amount, setAmount] = useState(0);
     const [currentScore, setCurrentScore] = useState(0);
@@ -26,11 +26,20 @@ const ScoreFrame = (props: {team: string, score: number}) => {
         }
         setAmount(amount);
     }, [ props.score, currentScore ]);
+
+    useEffect(() => {
+        props.onDisplayedScoreChanged(currentScore);
+    }, [ currentScore ]);
     
     return (
         <div className={`score-frame team-${props.team}`} >
             <div className="header">
-                {props.team}
+                <em>
+                    {props.team}
+                </em>
+                <em>
+                    {props.rank}
+                </em>
             </div>
             <div className="body">
                 {currentScore} point{currentScore >= 2 ? 's': ''}

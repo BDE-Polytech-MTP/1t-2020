@@ -5,7 +5,7 @@ import { environment } from '../../environments/environment';
 
 const ChallengeForm = (props: { updateChallenge: (c: Challenge) => void, token: string }) => {
 
-    const [formData, setFormData] = useState({ name: '', score: '' });
+    const [formData, setFormData] = useState({ name: '', score: '', category: '' });
     const [sending, setSending] = useState(false);
 
     const createChallenge = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
@@ -13,7 +13,8 @@ const ChallengeForm = (props: { updateChallenge: (c: Challenge) => void, token: 
 
         const challenge = {
             title: formData.name,
-            score: parseInt(formData.score, 10) | 0
+            score: parseInt(formData.score, 10) | 0,
+            category: formData.category.trim().length ? formData.category.trim() : null,
         };
 
         setSending(true);
@@ -40,6 +41,20 @@ const ChallengeForm = (props: { updateChallenge: (c: Challenge) => void, token: 
     return (
         <form className="challenge-form">
             <h3>Ajouter un challenge</h3>
+
+            <div className="form-group">
+                <label htmlFor="title">Catégorie</label>
+                <input 
+                    type="text" 
+                    minLength={0}  
+                    name="category" 
+                    id="category" 
+                    placeholder="Catégorie (optionnelle)" 
+                    value={formData.category} 
+                    onChange={(e) => setFormData({ category: e.target.value, score: formData.score, name: formData.name })}
+                />
+            </div>
+
             <div className="form-group">
                 <label htmlFor="title">Titre</label>
                 <input 
@@ -50,7 +65,7 @@ const ChallengeForm = (props: { updateChallenge: (c: Challenge) => void, token: 
                     id="title" 
                     placeholder="Titre" 
                     value={formData.name} 
-                    onChange={(e) => setFormData({ name: e.target.value, score: formData.score})}
+                    onChange={(e) => setFormData({ name: e.target.value, score: formData.score, category: formData.category })}
                 />
             </div>
 
@@ -64,7 +79,7 @@ const ChallengeForm = (props: { updateChallenge: (c: Challenge) => void, token: 
                     id="score" 
                     placeholder="Points"
                     value={formData.score} 
-                    onChange={(e) => setFormData({ score: e.target.value, name: formData.name})}
+                    onChange={(e) => setFormData({ score: e.target.value, name: formData.name, category: formData.category })}
                 />
             </div>
 
@@ -74,7 +89,7 @@ const ChallengeForm = (props: { updateChallenge: (c: Challenge) => void, token: 
                 disabled={sending || formData.name.length === 0 || isNaN(parseInt(formData.score))}
                 onClick={createChallenge}
             >Ajouter</button>
-            <button className="reset" type="reset" onClick={() => setFormData({name: '', score: null})}>Vider le formulaire</button>
+            <button className="reset" type="reset" onClick={() => setFormData({name: '', score: null, category: ''})}>Vider le formulaire</button>
         </form>
     );
 };

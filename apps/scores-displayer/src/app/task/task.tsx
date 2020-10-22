@@ -6,19 +6,21 @@ import { environment } from '../../environments/environment';
 const Task = (props: { challenge: Challenge, updateChallenge: (chall: Challenge) => void, token?: string, deleteChallenge: (challenge: Challenge) => void }) => {
 
     const {challenge, updateChallenge} = props;
-    const [dialogOpened, setDialogOpened] = useState(false);
+    const [deleteDialogOpened, setDialogOpened] = useState(false);
+    const [editDialogOpened, setEditDialogOpened] = useState<'clover' | 'sam' | 'alex' | null>(null);
 
-    const update = (name: 'clover' | 'sam' | 'alex') => {
+    const update = (name: 'clover' | 'sam' | 'alex', value: number) => {
         if (!props.token) {
             return;
         }
 
-        const newValue = !challenge[name];
-        updateChallenge({ ... props.challenge, [name]: newValue });
+        const oldValue = challenge[name];
+
+        updateChallenge({ ... props.challenge, [name]: value });
         fetch(`${environment.apiURL}/api/challenges/${challenge.uuid}`, {
             method: 'PATCH',
             body: JSON.stringify({
-                [name]: newValue
+                [name]: value
             }),
             headers: {
                 'Content-Type': 'application/json',
@@ -28,9 +30,9 @@ const Task = (props: { challenge: Challenge, updateChallenge: (chall: Challenge)
         .then((res) => res.json())
         .then((chall) => updateChallenge(chall))
         .catch(e => {
-            updateChallenge({ ... props.challenge, [name]: !newValue });
+            updateChallenge({ ... props.challenge, [name]: oldValue });
             console.error(e);
-        })
+        });
     };
 
     const deleteChallenge = () => {
@@ -48,6 +50,8 @@ const Task = (props: { challenge: Challenge, updateChallenge: (chall: Challenge)
             updateChallenge(challenge);
         });
     };
+
+    const displayIfGreaterThanZero = (value: number) => value > 0 ? value : '';
     
     return (
         <>
@@ -57,14 +61,14 @@ const Task = (props: { challenge: Challenge, updateChallenge: (chall: Challenge)
                 </div>
                 <div className="boxes">
                     <div className={`checkbox ${challenge.clover ? 'done': ''}`} onClick={
-                        () => update('clover')
-                    }></div>
+                        () => setEditDialogOpened('clover')
+                    }>{ displayIfGreaterThanZero(challenge.clover) }</div>
                     <div className={`checkbox ${challenge.sam  ? 'done': ''}`} onClick={
-                        () => update('sam')
-                    }></div>
+                        () => setEditDialogOpened('sam')
+                    }>{ displayIfGreaterThanZero(challenge.sam) }</div>
                     <div className={`checkbox ${challenge.alex  ? 'done': ''}`} onClick={
-                        () => update('alex')
-                    }></div>
+                        () => setEditDialogOpened('alex')
+                    }>{ displayIfGreaterThanZero(challenge.alex) }</div>
                     {
                         props.token ? 
                             <div className="delete" onClick={() => setDialogOpened(true)}>
@@ -74,8 +78,17 @@ const Task = (props: { challenge: Challenge, updateChallenge: (chall: Challenge)
                     }
                 </div>
                 {
-                    props.token && dialogOpened ? 
+                    props.token && deleteDialogOpened ? 
                         <ConfirmDialog challenge={props.challenge} onCancel={() => setDialogOpened(false)} onConfirm={deleteChallenge} /> : null
+                }
+                {
+                    props.token && editDialogOpened ?
+                        <EditDialog challenge={props.challenge} onCancel={() => setEditDialogOpened(null)} onConfirm={
+                            (newValue) => {
+                                update(editDialogOpened, newValue);
+                                setEditDialogOpened(null);
+                            }
+                        } team={editDialogOpened} /> : null
                 }
             </div>
         </>
@@ -98,5 +111,27 @@ const ConfirmDialog = (props: { challenge: Challenge, onCancel: () => void, onCo
     )
 
 }
+
+const EditDialog = (props: { challenge: Challenge, onCancel: () => void, onConfirm: (newValue: number) => void, team: 'clover' | 'sam' | 'alex' }) => {
+
+    const [value, setValue] = useState(props.challenge[props.team]);
+
+    const valueInput = <input type="number" onChange={e => setValue(
+        Math.max(0, parseInt(e.target.value))
+    )} value={value}></input>;
+
+    return (
+        <div className="confirm-dialog">
+            <div className="dialog-background" onClick={props.onCancel}></div>
+            <div className="content">
+                <p>Modification du challenge : <strong>{props.challenge.title}</strong></p>
+                { valueInput }
+                <button className="cancel" onClick={props.onCancel}>Annuler</button>
+                <button className="confirm" onClick={() => props.onConfirm(valueInput.props.value)}>Confirmer</button>
+            </div>
+        </div>
+    )
+
+};
 
 export default Task;

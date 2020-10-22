@@ -1,0 +1,2 @@
+ALTER TABLE challenges
+ADD category VARCHAR(255) DEFAULT NULL;

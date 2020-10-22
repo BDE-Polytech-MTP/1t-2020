@@ -18,4 +18,34 @@
         text-align: center;
     }
 
+    .task-category {
+        color: white;
+        background-color: rgb(124, 191, 233);
+        text-align: center;
+        padding: 5px 0;
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        
+        &::before,
+        &::after {
+            content: '';
+            display: block;
+            height: 0.09em;
+            min-width: 30vw;
+        }
+        
+        &::before {
+            background: linear-gradient(to right, rgba(240,240,240,0), #fff);
+            margin-right: 4vh;
+        }
+        
+        &::after {
+            background: linear-gradient(to left, rgba(240,240,240,0), #fff);
+            margin-left: 4vh;
+        }
+
+    }
+
 }

@@ -13,67 +13,64 @@ const TasksList = (
     }
 ) => {
 
-    const [challenges, setChallenges] = useState([]);
+    const [elements, setElements] = useState([]);
 
     useEffect(() => {
-
-        if (props.token) {
-            setChallenges(props.challenges);
-            return;
-        }
-
-        const challenges = props.challenges;
-
-        const titleGrouped: {[title: string]: { chall: Challenge, count: number }} = challenges.reduce((prev: object, current) => {
-            const title = `${current.title}|${current.sam}|${current.alex}|${current.clover}|${current.score}`;
-            if (!prev[title]) {
-                prev[title] = {
-                    chall: current,
-                    count: 0,
-                };
+        const wholeBody = [];
+        let currentCat = [];
+        for (let i = 0; i < props.challenges.length; i++) {
+            const chall = props.challenges[i];
+            if (currentCat.length > 0 && props.challenges[i - 1].category !== chall.category) {
+                const prevChall = props.challenges[i - 1];
+                if (props.challenges[i - 1].category != null) {
+                    wholeBody.push(<TaskCategory key={prevChall.category} category={prevChall.category} />);
+                }
+                wholeBody.push(
+                    <div className="body" key={'body-' + prevChall.category}>
+                        {currentCat}
+                    </div>
+                );
+                currentCat = [];
             }
 
-            prev[title].count++;
-
-            return prev;
-        }, {});
-
-        const newChallenges: Challenge[] = [];
-        for (let key in titleGrouped) {
-            const data = titleGrouped[key];
-            if (data.count > 1) {
-                newChallenges.push({
-                    ... data.chall ,
-                    title: `${data.chall.title} (x${data.count})`
-                });
-            } else {
-                newChallenges.push(data.chall);
-            }
+            currentCat.push(<Task challenge={chall} key={chall.uuid} updateChallenge={props.updateChallenge} token={props.token} deleteChallenge={props.deleteChallenge} />);
         }
 
-        setChallenges(newChallenges);
+        if (currentCat.length > 0) {
+            const chall = props.challenges[props.challenges.length - 1];
+            if (chall.category !== null) {
+                wholeBody.push(<TaskCategory key={chall.category} category={chall.category} />);
+            }
+            wholeBody.push(
+                <div className="body" key={'body-' + chall.category}>
+                    {currentCat}
+                </div>
+            );
+        }
 
-    }, [props.challenges, props.token]);
+        setElements(wholeBody);
 
-    const tasks = challenges.map(chall => (
+    }, [props.challenges]);
+/*
+    const tasks = props.challenges.map(chall => (
         <Task challenge={chall} key={chall.uuid} updateChallenge={props.updateChallenge} token={props.token} deleteChallenge={props.deleteChallenge} />
     ));
-
+*/
     return (
         <>
             <div className="tasks-list">
                 <div className="header">
                     Défis
                 </div>
-                <div className="body">
                     {
-                        props.token ? <>
-                            <ChallengeForm updateChallenge={props.updateChallenge} token={props.token} />
-                            <hr />
-                        </> : null
+                        props.token ?
+                            <div className="body">
+                                <ChallengeForm updateChallenge={props.updateChallenge} token={props.token} />
+                                <hr />
+                            </div> 
+                        : null
                     }
-                    {tasks.length ? tasks : <PlaceHolder />}
-                </div>
+                {elements.length ? elements : <div className="body"><PlaceHolder /></div>}
             </div>
 
         </>
@@ -87,5 +84,15 @@ const PlaceHolder = () => {
         </>
     )
 };
+
+const TaskCategory = (props: { category: string}) => {
+    return (
+        <>
+            <div className="task-category">
+                {props.category}
+            </div>
+        </>
+    )
+}
 
 export default TasksList;

@@ -26,7 +26,7 @@ function isBodyValid(req: Request): boolean {
 }
 
 function hasTeam(req: Request, team: string): boolean {
-    return team in req.body && typeof req.body[team] === 'boolean';
+    return team in req.body && typeof req.body[team] === 'number';
 }
 
 async function updateTeams(req: Request): Promise<Challenge | null> {
